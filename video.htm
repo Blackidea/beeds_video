@@ -1,0 +1,208 @@
+<html>
+<head>
+
+</head>
+<body>
+<style>
+#o-playVideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -106px;
+    margin-left: -58px;
+    cursor: pointer;
+    -webkit-transition: visibility .3s, opacity .3s ease;
+    transition: visibility .3s, opacity .3s ease;
+}
+#o-firstScreen__overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transition: visibility .3s, opacity .3s ease;
+    transition: visibility .3s, opacity .3s ease;
+    background-image: url(/pattern.png);
+}
+</style>
+<div class="visible-lg" id="o-firstScreen__video">
+<video width="100%" height="auto" autoplay loop>
+  <source src="BEEDS.mp4" type="video/mp4">
+  <source src="movie.ogg" type="video/ogg">
+</video>
+<!--<iframe class="" id="o-ytVidea" width="100%" height="0" src="https://www.youtube.com/embed/E9cRdkBxr3g?enablejsapi=1&showinfo=1&modestbranding=1&showsearch=1&autohide=1&controls=1&origin=http://beeds.pro" frameborder="0"></iframe>
+--><script>
+  var player = null;
+  var wrapper = document.getElementById('c-firstScreen');
+  var iframe = document.getElementById('o-ytVidea');
+  var vidWidth = iframe.clientWidth;
+  iframe.style.height = vidWidth / 1.78 + 'px';
+  window.addEventListener('resize', function() {
+      var newWidth = iframe.clientWidth;
+      iframe.style.height = newWidth / 1.78 + 'px';
+  });
+
+  function LoadYouTubeIframeAPI() {
+      var scriptElement = document.createElement("script");
+      scriptElement.src = "http://www.youtube.com/iframe_api";
+      var firstScriptElement = document.getElementsByTagName("script")[0];
+      firstScriptElement.parentNode.insertBefore(scriptElement, firstScriptElement);
+  }
+
+  function onYouTubeIframeAPIReady() {
+      var playerParams = {
+          playerVars: {
+              "enablejsapi": 1,
+              "origin": document.domain,
+              "rel": 0
+          },
+          events: {
+              "onReady": onPlayerReady,
+              "onError": onPlayerError,
+              "onStateChange": onPlayerStateChange
+          }
+      };
+      player = new YT.Player("o-ytVidea", playerParams);
+  }
+
+  function onPlayerReady(event) {
+      // bind events
+      var playButton = document.getElementById("o-playVideo");
+      playButton.addEventListener("click", function() {
+          player.playVideo();
+          setTimeout(function() {
+             wrapper.setAttribute('data-active', 'y');
+             setTimeout(function() {
+              var newHeight = wrapper.clientHeight;
+              iframe.style.height =  newHeight + 'px';
+              iframe.style.width = newHeight * 1.78 + 'px';
+             },100);
+          },200);
+      });
+  }
+
+    var bodyEl = document.getElementsByTagName('body')[0];
+  bodyEl.addEventListener("click", function(e) {
+    console.log(e.target);
+    if (e.target.id !== "o-playVideo") {
+      player.stopVideo();
+    wrapper.setAttribute('data-active', '');
+    }
+  });
+
+  function onPlayerError(event) {}
+
+  function onPlayerStateChange(event) {
+    console.log(event);
+    if(event.data === 0) {          
+      wrapper.setAttribute('data-active', '');
+            }
+  }
+  
+  (function(funcName, baseObj) {
+      // The public function name defaults to window.docReady
+      // but you can pass in your own object and own function name and those will be used
+      // if you want to put them in a different namespace
+      funcName = funcName || "docReady";
+      baseObj = baseObj || window;
+      var readyList = [];
+      var readyFired = false;
+      var readyEventHandlersInstalled = false;
+      // call this when the document is ready
+      // this function protects itself against being called more than once
+      function ready() {
+          if (!readyFired) {
+              // this must be set to true before we start calling callbacks
+              readyFired = true;
+              for (var i = 0; i < readyList.length; i++) {
+                  // if a callback here happens to add new ready handlers,
+                  // the docReady() function will see that it already fired
+                  // and will schedule the callback to run right after
+                  // this event loop finishes so all handlers will still execute
+                  // in order and no new ones will be added to the readyList
+                  // while we are processing the list
+                  readyList[i].fn.call(window, readyList[i].ctx);
+              }
+              // allow any closures held by these functions to free
+              readyList = [];
+          }
+      }
+
+      function readyStateChange() {
+          if (document.readyState === "complete") {
+              ready();
+          }
+      }
+      // This is the one public interface
+      // docReady(fn, context);
+      // the context argument is optional - if present, it will be passed
+      // as an argument to the callback
+      baseObj[funcName] = function(callback, context) {
+          // if ready has already fired, then just schedule the callback
+          // to fire asynchronously, but right away
+          if (readyFired) {
+              setTimeout(function() {
+                  callback(context);
+              }, 1);
+              return;
+          } else {
+              // add the function and context to the list
+              readyList.push({
+                  fn: callback,
+                  ctx: context
+              });
+          }
+          // if document already ready to go, schedule the ready function to run
+          if (document.readyState === "complete") {
+              setTimeout(ready, 1);
+          } else if (!readyEventHandlersInstalled) {
+              // otherwise if we don't have event handlers installed, install them
+              if (document.addEventListener) {
+                  // first choice is DOMContentLoaded event
+                  document.addEventListener("DOMContentLoaded", ready, false);
+                  // backup is window load event
+                  window.addEventListener("load", ready, false);
+              } else {
+                  // must be IE
+                  document.attachEvent("onreadystatechange", readyStateChange);
+                  window.attachEvent("onload", ready);
+              }
+              readyEventHandlersInstalled = true;
+          }
+      }
+  })("docReady", window);
+  docReady(function() {
+      LoadYouTubeIframeAPI();
+  });
+</script>
+
+<div id="o-firstScreen__overlay">
+    <svg class="visible-lg" id="o-playVideo" version="1.1" width="114" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+      viewBox="0 0 114 114" enable-background="new 0 0 114 114" xml:space="preserve">
+      <g>
+    <defs>
+        <rect id="SVGID_1_play" width="114" height="114"/>
+    </defs>
+    <clipPath id="SVGID_2_play">
+        <use xlink:href="#SVGID_1_play"  overflow="visible"/>
+    </clipPath>
+    
+        <path clip-path="url(#SVGID_2_play)" fill="none" stroke="#ec8117" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="
+        M57,2c30.4,0,55,24.6,55,55s-24.6,55-55,55S2,87.4,2,57c0-9.7,2.5-18.8,6.9-26.7"/>
+    <path fill="#ec8117" clip-path="url(#SVGID_2_play)" d="M43.7,36.5L79.1,57L43.7,77.5V36.5 M43.7,32.5c-0.7,0-1.4,0.2-2,0.5c-1.2,0.7-2,2-2,3.5v40.9
+        c0,1.4,0.8,2.8,2,3.5c0.6,0.4,1.3,0.5,2,0.5c0.7,0,1.4-0.2,2-0.5l35.4-20.5c1.2-0.7,2-2,2-3.5c0-1.4-0.8-2.8-2-3.5L45.7,33.1
+        C45.1,32.7,44.4,32.5,43.7,32.5"/>
+    </g>
+    </svg>
+</div>
+  
+<div class="" id="c-videoWrapper">	
+	<iframe class="" id="o-ytVideo" width="100%" height="0" src="https://www.youtube.com/embed/E9cRdkBxr3g?enablejsapi=1&origin=http://cc30074.tmweb.ru&fs=0" frameborder="0" allowfullscreen></iframe>
+</div>
+</body>
+</html>
+
+<?php
+
+
+?>
